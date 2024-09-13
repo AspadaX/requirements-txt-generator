@@ -1,5 +1,39 @@
+use std::{collections::HashSet, io::Write};
+
 use tokio::io::AsyncReadExt;
 
+use crate::virtual_envs::traits::VirtualEnvironmentPackage;
+
+pub struct PythonPackage {
+	name: String,
+	version: String
+}
+
+impl PythonPackage {
+	pub fn new(name: String, version: String) -> Self {
+		return PythonPackage { name: name, version: version };
+	}
+}
+
+impl ToString for PythonPackage {
+	fn to_string(&self) -> String {
+		return format!("{}=={}", &self.name, &self.version);
+	}
+}
+
+impl VirtualEnvironmentPackage for PythonPackage {
+	fn get_name(&self) -> String {
+		return self.name.clone();
+	}
+	
+	fn get_version(&self) -> String {
+		return self.version.clone();
+	}
+}
+
+
+/// a helper function to get all py files under the specified 
+/// directory
 pub fn recursively_get_py_files(
 	directory: &std::path::PathBuf
 ) -> Result<Vec<std::path::PathBuf>, Box<dyn std::error::Error>> {
@@ -83,6 +117,8 @@ pub async fn get_py_files_content(
     return Ok(py_files_content);
 }
 
+/// we use the parent imports to determine which packages that the project
+/// uses. 
 pub fn collect_py_parent_imports(
 	py_file_contents: Vec<String>
 ) -> std::collections::HashSet<String> {
@@ -114,4 +150,26 @@ pub fn collect_py_parent_imports(
 		}
 	}
 	return all_parent_imports;
+}
+
+pub fn get_packages<T>(
+	python_parent_imports: HashSet<String>,
+	virtual_environment_packages: Vec<T>
+) -> Result<Vec<PythonPackage>, Box<dyn std::error::Error>> 
+where T: VirtualEnvironmentPackage {
+	
+	let mut packages: Vec<PythonPackage> = Vec::new();
+	
+	for package in virtual_environment_packages {
+		if python_parent_imports.contains(&package.get_name()) {
+			packages.push(
+				PythonPackage::new(
+					package.get_name(), 
+					package.get_version()
+				)
+			);
+		}
+	}
+	
+	return Ok(packages);
 }
