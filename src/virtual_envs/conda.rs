@@ -71,8 +71,17 @@ impl Anaconda {
 		python_version: String
 	) -> Result<Vec<CondaPackage>, Box<dyn std::error::Error>> {
 		// construct the environment path
-		let environment_path = self.path
-			.clone() + "/envs/" + environment.as_str() + "/lib/" + python_version.as_str() + "/site-packages";
+		let mut environment_path = String::new();
+		
+		// on Non-Windows platforms, like Linux and macOS
+		if !cfg!(target_os = "windows") {
+			environment_path = self.path
+				.clone() + "/envs/" + environment.as_str() + "/lib/" + python_version.as_str() + "/site-packages";
+		} else { 
+			// on Windows platforms
+			environment_path = self.path
+				.clone() + "/envs/" + environment.as_str() + "/Lib/" + "/site-packages";
+		}
 		
 		// the retrieved packages 
 		let mut packages: Vec<CondaPackage> = Vec::new();
@@ -162,6 +171,7 @@ impl CondaEnvironment {
 	}
 }
 
+/// a function for looking up the existing Conda environments
 pub fn lookup_conda_environments() -> Result<
 	Vec<String>, 
 	Box<dyn std::error::Error>
