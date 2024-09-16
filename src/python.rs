@@ -6,18 +6,23 @@ use crate::virtual_envs::traits::VirtualEnvironmentPackage;
 
 pub struct PythonPackage {
 	name: String,
-	version: String
+	version: Option<String>
 }
 
 impl PythonPackage {
 	pub fn new(name: String, version: String) -> Self {
-		return PythonPackage { name: name, version: version };
+		return PythonPackage { name: name, version: Some(version) };
 	}
 }
 
 impl ToString for PythonPackage {
 	fn to_string(&self) -> String {
-		return format!("{}=={}", &self.name, &self.version);
+		if self.version.is_none() {
+			return format!("{}", &self.name);
+		} else {
+			let version = &self.version.clone().unwrap();
+			return format!("{}=={}", &self.name, version);
+		}
 	}
 }
 
@@ -27,7 +32,12 @@ impl VirtualEnvironmentPackage for PythonPackage {
 	}
 	
 	fn get_version(&self) -> String {
-		return self.version.clone();
+		let version = match &self.version {
+			Some(result) => return result.clone(),
+			None => return String::new()
+		};
+		
+		return version;
 	}
 }
 
@@ -161,14 +171,18 @@ where T: VirtualEnvironmentPackage {
 	let mut packages: Vec<PythonPackage> = Vec::new();
 	
 	for package in virtual_environment_packages {
-		if python_parent_imports.contains(&package.get_name()) {
-			packages.push(
-				PythonPackage::new(
-					package.get_name(), 
-					package.get_version()
-				)
-			);
-		}
+		packages.push(
+			PythonPackage::new(
+				package.get_name(), 
+				package.get_version()
+			)
+		);
+		// if python_parent_imports.contains(&package.get_name()) {
+		// } else {
+		// 	packages.push(
+		// 		PythonPackage::
+		// 	)
+		// }
 	}
 	
 	return Ok(packages);

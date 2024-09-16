@@ -1,5 +1,3 @@
-use std::default;
-
 use clap::Parser;
 
 /// Simple program to greet a person

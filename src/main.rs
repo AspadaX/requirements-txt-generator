@@ -14,6 +14,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	let arguments = cli::Arguments::parse();
 	
 	if arguments.virtual_environment == "Conda" {
+		
+		// record the start time for benchmarking
+		let start_time = std::time::Instant::now();
+		println!(
+			"Start generating requirements.txt ...for {}", 
+			&arguments.path
+		);
+		
 		let anaconda = virtual_envs::conda::Anaconda::new()?;
 		let packages = anaconda.get_packages(
 			arguments.env,
@@ -51,6 +59,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 		
 		path_buffer.push("requirements.txt");
 		writer::write_to_file(path_buffer, python_packages_string)?;
+		
+		// display the benchmark
+		let end = start_time.elapsed().as_secs_f64();
+		println!("Generation finished in {} secs", end);
 	}
 	
 	return Ok(());
