@@ -8,7 +8,7 @@ cargo install requirements-txt-generator
 ```
 then, use this command to generate your `requirements.txt`
 ```
-requirements-txt-generator --path `your python project path`
+requirements-txt-generator --path `your python project path` --python-version `your python version, for example, 3.11.4 is python3.11` --env `your conda enviornment name for your project`
 ```
 there you go, after the program finishes, you will see the `requirements.txt` under your project folder.
 
