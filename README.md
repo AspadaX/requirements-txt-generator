@@ -12,6 +12,11 @@ requirements-txt-generator --path `your python project path` --python-version `y
 ```
 there you go, after the program finishes, you will see the `requirements.txt` under your project folder.
 
+However, if you are Windows user, you will have to specify your Conda environment path. You can run this tool with the following command:
+```
+requirements-txt-generator.exe --path `your python project path`  --env-path `your conda enviornment path`
+```
+
 # Contributions
 All contributions are welcomed. 
 
