@@ -2,7 +2,7 @@
 This project aims to reduce the painful experience after done writing a python project, and then find out that you forgot to keep a `requirements.txt`. The project is still at its early stage, but it can now get the basic works done. Feel free to try out.
 
 # Why to use
-While the Python script finished a generation in 0.04 seconds and `pipreqs` used more than 1 seconds, the Rust implementation of a requirements txt generator completed a generation in 0.01 seconds, as it does the following: 
+While the Python script finished a generation in 0.04 seconds and `pipreqs` used more than 1 seconds, the Rust implementation of a requirements txt generator completed a generation in 0.01 seconds with cleaner result, as it does the following: 
 - The Rust implementation is inherently faster than garbage collected languages. 
 - It collects python packages without connecting to third party API written in Python, for example, Python codes or Conda API. Rather, it achieves this by analyzing the Conda environment folder and the project files.
 - The Rust implementation relis on the local packages information without the need to reqeust the Internet. For example, in `pipreqs`, it retrieves the latest package version via http requests which comes with two disadvantages:
